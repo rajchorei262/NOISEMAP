@@ -3,566 +3,315 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#080817">
-<title>RANOVA AI</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07111f">
+<title>NOISEMAP | Smart Noise Intelligence</title>
 <style>
-:root {
- --bg:#080817;
- --panel:#111126;
- --panel2:#17172f;
- --purple:#9747ff;
- --blue:#267bff;
- --cyan:#28d9ee;
- --text:#f5f4ff;
- --muted:#a3a2bf;
- --border:#30304c;
-}
-* {box-sizing:border-box;margin:0;padding:0}
-body {
- background:var(--bg);
- color:var(--text);
- font-family:Arial,sans-serif;
- min-height:100vh;
-}
-button,input,textarea {font:inherit}
-button {cursor:pointer}
-header {
- height:68px;
- display:flex;
- align-items:center;
- justify-content:space-between;
- padding:0 18px;
- border-bottom:1px solid var(--border);
- position:sticky;
- top:0;
- z-index:5;
- background:#080817ee;
- backdrop-filter:blur(15px);
-}
-.logo {
- font-size:22px;
- font-weight:900;
- letter-spacing:2px;
- background:linear-gradient(90deg,#b36aff,#25d7ed);
- color:transparent;
- background-clip:text;
-}
-.status {font-size:11px;color:#4de8b3}
-main {max-width:700px;margin:auto;padding:20px 15px 100px}
-.hero {text-align:center;padding:25px 0 20px}
-.orb {
- width:105px;height:105px;border-radius:50%;
- margin:0 auto 22px;
- background:radial-gradient(circle at 35% 30%,#e4d4ff,#9747ff 38%,#153b9d 75%);
- box-shadow:0 0 35px #9747ff88,0 0 75px #267bff44;
- animation:pulse 3s infinite alternate;
-}
-@keyframes pulse {
- to {transform:scale(1.07);box-shadow:0 0 60px #9747ff}
-}
-.hero h1 {font-size:27px;margin-bottom:10px}
-.gradient {
- background:linear-gradient(90deg,#bd72ff,#29d9ed);
- color:transparent;background-clip:text;
-}
-.hero p {font-size:13px;color:var(--muted);line-height:1.7}
-.tabs {
- display:grid;grid-template-columns:repeat(4,1fr);
- gap:7px;margin:20px 0;
-}
-.tab {
- padding:12px 4px;border-radius:11px;
- background:var(--panel);color:var(--muted);
- border:1px solid var(--border);font-size:12px;
-}
-.tab.active {
- color:white;border-color:var(--purple);
- background:#281747;box-shadow:0 0 15px #9747ff30;
-}
-.page {display:none}
-.page.active {display:block}
-.card {
- background:var(--panel);
- border:1px solid var(--border);
- border-radius:18px;
- padding:19px;margin-bottom:15px;
-}
-.card h2 {font-size:18px;margin-bottom:9px}
-.card h3 {font-size:14px;margin:15px 0 7px}
-.muted {font-size:13px;color:var(--muted);line-height:1.6}
-.upload {
- display:block;text-align:center;
- border:2px dashed #61528a;
- background:#17172e;border-radius:15px;
- padding:25px 12px;margin:17px 0;
-}
-.upload .emoji {font-size:36px;margin-bottom:10px}
-.upload p {font-size:13px;color:#c7c3e3;line-height:1.6}
-input[type=file] {display:none}
-#preview {
- display:none;width:100%;max-height:280px;
- object-fit:contain;border-radius:12px;margin-top:15px;
-}
-.buttons {display:flex;gap:9px;margin-top:12px}
-.btn {
- padding:13px;border:0;border-radius:11px;
- color:white;font-weight:bold;
-}
-.primary {
- width:100%;background:linear-gradient(100deg,var(--purple),var(--blue));
- box-shadow:0 0 18px #7544ff40;
-}
-.secondary {flex:1;background:#252541;border:1px solid #444465}
-.btn:active,.tab:active {transform:scale(.98)}
-.result {
- background:#0c0c20;border-radius:12px;
- padding:14px;margin-top:15px;
- font-size:13px;line-height:1.7;
- white-space:pre-wrap;overflow-wrap:anywhere;
-}
-#scanStatus {margin-top:12px;color:#f6c96c;font-size:12px;line-height:1.6}
-.chatbox {
- height:340px;overflow-y:auto;
- background:#09091a;border-radius:13px;
- padding:12px;margin:15px 0;
-}
-.message {
- max-width:90%;padding:12px;
- border-radius:12px;margin:9px 0;
- font-size:13px;line-height:1.6;
- white-space:pre-wrap;overflow-wrap:anywhere;
-}
-.bot {background:#242442;color:#e2e0fa}
-.user {background:#5934a5;margin-left:auto}
-.chatinput {display:flex;gap:8px}
-.chatinput input {
- flex:1;min-width:0;background:#09091a;
- border:1px solid #424260;border-radius:11px;
- padding:13px;color:white;outline:none;
-}
-.chatinput button {
- background:linear-gradient(90deg,var(--purple),var(--blue));
- border:0;color:white;padding:0 16px;border-radius:11px;
-}
-.item {
- padding:13px;background:#19192f;
- border:1px solid var(--border);
- border-radius:11px;margin-top:9px;
- font-size:13px;line-height:1.5;
-}
-.item button {
- background:#3a285c;color:white;border:0;
- padding:7px 10px;border-radius:7px;margin-top:8px;
-}
-.settings-row {
- display:flex;justify-content:space-between;
- gap:10px;align-items:center;padding:14px 0;
- border-bottom:1px solid var(--border);
- font-size:13px;
-}
-footer {
- text-align:center;color:#777794;
- font-size:11px;line-height:1.8;padding:25px;
-}
-.small {font-size:11px;color:var(--muted);line-height:1.6}
-.empty {text-align:center;padding:25px;color:var(--muted);font-size:13px}
+:root{--bg:#07111f;--panel:#101e31;--panel2:#172941;--cyan:#22d3ee;--blue:#3b82f6;--text:#f1f5f9;--muted:#94a3b8;--green:#22c55e;--red:#ef4444;--border:#2a3d55}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.muted,.small{color:var(--muted)}
+.small{font-size:12px}
+.brand{font-size:23px;font-weight:900;letter-spacing:1px;display:flex;align-items:center;gap:10px}
+.logo{width:43px;height:43px;border-radius:13px;background:linear-gradient(135deg,var(--cyan),var(--blue));color:#06111e;display:grid;place-items:center;font-size:23px}
+.btn{border:0;border-radius:10px;padding:12px 16px;background:linear-gradient(110deg,var(--cyan),var(--blue));color:#06111e;font-weight:bold}
+.btn.secondary{background:#20344d;color:white;border:1px solid var(--border)}
+.btn.danger{background:#7f1d1d;color:white}
+.btn:disabled{opacity:.4}
+input,select,textarea{width:100%;padding:12px;background:#091729;color:white;border:1px solid var(--border);border-radius:9px;margin-top:7px}
+label{display:block;font-size:13px;color:#cbd5e1;margin:12px 0}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:17px;margin-bottom:15px}
+.card h3{margin:0 0 12px}
+.login{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:5%;gap:30px;background:radial-gradient(circle at 20% 20%,#143653,#07111f 60%)}
+.loginIntro h1{font-size:clamp(38px,6vw,65px);line-height:1.05}
+.team{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
+.team div{background:#102239;border:1px solid var(--border);padding:11px;border-radius:10px;min-width:125px}
+.team b,.team span{display:block}.team span{font-size:11px;color:var(--muted);margin-top:4px}
+.loginBox{max-width:440px;width:100%;margin:auto}
+.tabs{display:flex;gap:8px;margin:15px 0}.tabs button{flex:1}
+.app{min-height:100vh}
+.sidebar{position:fixed;top:0;bottom:0;left:0;width:235px;background:#091626;border-right:1px solid var(--border);padding:18px 13px;overflow:auto;z-index:5}
+.sidebar .brand{margin:5px 5px 28px}
+.navtitle{font-size:10px;color:#64748b;letter-spacing:1.5px;margin:20px 10px 8px}
+.nav{display:block;width:100%;text-align:left;padding:12px;border:0;border-radius:9px;background:transparent;color:#b4c3d5;margin:3px 0}
+.nav:hover,.nav.active{background:#153149;color:var(--cyan)}
+.main{margin-left:235px;padding:23px;max-width:1600px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.page{display:none}.page.active{display:block}
+.hero{padding:24px;border:1px solid #28516b;border-radius:16px;background:linear-gradient(120deg,#102e48,#12213d);margin-bottom:16px}
+.hero h1{font-size:30px;margin:10px 0}
+.pill{display:inline-block;padding:6px 10px;border-radius:30px;background:#123b4b;color:var(--cyan);font-size:11px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.two{display:grid;grid-template-columns:1.3fr 1fr;gap:15px}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat{font-size:28px;font-weight:900;margin:8px 0}
+.statlabel{font-size:12px;color:var(--muted)}
+canvas{width:100%;height:210px;display:block}
+.gauge{width:170px;height:170px;border-radius:50%;margin:18px auto;display:grid;place-items:center;background:conic-gradient(var(--cyan) 0deg,#26374c 0deg);position:relative}
+.gauge:before{content:"";position:absolute;width:138px;height:138px;border-radius:50%;background:var(--panel)}
+.gaugeContent{position:relative;text-align:center}.gauge strong{font-size:37px;display:block}
+.line{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);font-size:13px}
+.notice{padding:12px;border-radius:9px;background:#172b42;border:1px solid var(--border);font-size:12px;color:#cbd5e1}
+.progress{height:8px;background:#26374c;border-radius:20px;overflow:hidden}.progress div{height:100%;width:0;background:var(--cyan)}
+.question{font-size:19px;line-height:1.5;margin:20px 0}
+.option{display:block;width:100%;text-align:left;padding:13px;background:#0b1a2c;color:white;border:1px solid var(--border);border-radius:9px;margin:8px 0}
+.option.selected{border-color:var(--cyan);background:#12344a}
+.option.correct{border-color:var(--green);background:#123526}
+.option.wrong{border-color:var(--red);background:#3a1c25}
+.mobileMenu{display:none}
+table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:10px;border-bottom:1px solid var(--border);font-size:13px}
+@media(max-width:950px){.grid{grid-template-columns:repeat(2,1fr)}.sidebar{width:205px}.main{margin-left:205px}}
+@media(max-width:700px){.sidebar{display:none;width:245px}.sidebar.open{display:block}.main{margin:0;padding:13px}.mobileMenu{display:inline-block}.two,.three{grid-template-columns:1fr}.login{grid-template-columns:1fr;padding:18px}.loginIntro h1{font-size:40px}.topbar h2{font-size:17px}}
 </style>
 </head>
-
 <body>
 
-<header>
- <div class="logo">RANOVA AI</div>
- <div class="status">● INTERFACE READY</div>
-</header>
-
-<main>
-
-<section class="hero">
- <div class="orb"></div>
- <h1>WELCOME TO <span class="gradient">RANOVA</span></h1>
- <p>SCAN ANYTHING. KNOW EVERYTHING.<br>
- THREE MINDS. ONE VISION.</p>
-</section>
-
-<nav class="tabs">
- <button class="tab active" data-page="scanner">⌕ Scan</button>
- <button class="tab" data-page="assistant">✦ AI Chat</button>
- <button class="tab" data-page="history">◷ History</button>
- <button class="tab" data-page="settings">⚙ Settings</button>
-</nav>
-
-<!-- SCANNER -->
-
-<section class="page active" id="scanner">
- <div class="card">
-  <h2>Universal AI Scanner</h2>
-  <p class="muted">Choose any picture and prepare it for AI analysis.</p>
-
-  <label class="upload" for="imageInput">
-   <div class="emoji">📸</div>
-   <p><b>Tap to select an image</b></p>
-   <p>Camera or gallery</p>
-   <img id="preview" alt="Image preview">
-  </label>
-
-  <input id="imageInput" type="file" accept="image/*">
-
-  <div class="buttons">
-   <button class="btn secondary" id="cameraBtn">📷 Camera</button>
-   <button class="btn secondary" id="galleryBtn">🖼 Gallery</button>
+<!-- LOGIN -->
+<section id="authScreen" class="login">
+ <div class="loginIntro">
+  <div class="brand"><div class="logo">N</div> NOISEMAP</div>
+  <span class="pill">SMART NOISE INTELLIGENCE PLATFORM</span>
+  <h1>Measure.<br><span style="color:var(--cyan)">Map.</span><br>Understand.</h1>
+  <p class="muted">Classroom noise intelligence, advanced learning and performance analytics.</p>
+  <div class="team">
+   <div><b>Arup Sinha</b><span>Founder</span></div>
+   <div><b>Raj Chorei</b><span>CEO</span></div>
+   <div><b>Nathan Ranglong</b><span>Co-Founder</span></div>
   </div>
-
-  <div style="margin-top:15px">
-   <button class="btn primary" id="analyzeBtn">✦ ANALYZE IMAGE</button>
-  </div>
-  <p id="scanStatus"></p>
-  <div id="scanResult" class="result" hidden></div>
-  <button id="saveScan" class="btn secondary" style="display:none;width:100%;margin-top:10px">☆ Save to favourites</button>
  </div>
-
- <div class="card">
-  <h2>What can it scan?</h2>
-  <p class="muted">
-   🌿 Plants, flowers and trees<br><br>
-   🦋 Animals, birds and insects<br><br>
-   🚘 Vehicles and machines<br><br>
-   💻 Electronics and technology<br><br>
-   🍎 Food and everyday objects<br><br>
-   🪨 Rocks and minerals<br><br>
-   🏛 Buildings and landmarks<br><br>
-   👤 People and visible objects<br><br>
-   And much more.
-  </p>
+ <div class="card loginBox">
+  <h2 id="authTitle">Welcome to NOISEMAP</h2>
+  <p class="small muted" id="authDesc">Sign in to your local demo account.</p>
+  <div class="tabs">
+   <button class="btn" id="loginTab" onclick="setAuth('login')">Login</button>
+   <button class="btn secondary" id="signupTab" onclick="setAuth('signup')">Create account</button>
+  </div>
+  <form id="authForm">
+   <div id="nameWrap" class="hidden"><label>Full name<input id="fullName"></label></div>
+   <label>Email<input type="email" id="email" required></label>
+   <label>Password<input type="password" id="password" minlength="6" required></label>
+   <div id="extraWrap" class="hidden">
+    <label>School<input id="school"></label>
+    <label>Class / Role<input id="className" placeholder="e.g. Class 10"></label>
+   </div>
+   <button class="btn" style="width:100%" id="authSubmit">Login</button>
+  </form>
+  <p id="authMessage" class="small"></p>
+  <div class="notice">Demo authentication only. Do not use a real password. This version stores data on this browser, not in a secure cloud account.</div>
  </div>
 </section>
 
-<!-- ASSISTANT -->
-
-<section class="page" id="assistant">
- <div class="card">
-  <h2>✦ RANOVA AI Assistant</h2>
-  <p class="muted">Ask questions, explore ideas and communicate using your voice.</p>
-
-  <div class="chatbox" id="chatbox">
-   <div class="message bot">Hello! Welcome to RANOVA AI. What would you like to explore today?</div>
+<!-- APPLICATION -->
+<div id="app" class="app hidden">
+ <aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="logo">N</div> NOISEMAP</div>
+  <div class="navtitle">MAIN</div>
+  <button class="nav active" data-page="dashboard">⌂ Dashboard</button>
+  <button class="nav" data-page="noise">〰 Noise Monitor</button>
+  <button class="nav" data-page="mapper">▦ Class Mapper</button>
+  <div class="navtitle">LEARNING</div>
+  <button class="nav" data-page="mcq">✎ MCQ Academy</button>
+  <button class="nav" data-page="arena">🏆 Challenge Arena</button>
+  <button class="nav" data-page="assistant">✧ AI Assistant</button>
+  <div class="navtitle">PERSONAL</div>
+  <button class="nav" data-page="analytics">▥ Analytics</button>
+  <button class="nav" data-page="reports">▤ Reports</button>
+  <button class="nav" data-page="profile">◉ My Profile</button>
+  <button class="nav" data-page="settings">⚙ Settings</button>
+  <button class="nav" onclick="logout()">↪ Logout</button>
+ </aside>
+ <main class="main">
+  <div class="topbar">
+   <div style="display:flex;align-items:center;gap:10px">
+    <button class="btn secondary mobileMenu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+    <div><h2 id="pageTitle" style="margin:0">Dashboard</h2><span class="small">NOISEMAP Intelligence</span></div>
+   </div>
+   <span class="small" id="topUser"></span>
   </div>
 
-  <div class="chatinput">
-   <input id="chatInput" placeholder="Ask anything..." autocomplete="off">
-   <button id="sendBtn">SEND</button>
-  </div>
+  <!-- DASHBOARD -->
+  <section class="page active" id="page-dashboard">
+   <div class="hero">
+    <span class="pill">PERSONAL COMMAND CENTRE</span>
+    <h1>Welcome, <span id="welcomeName">Student</span>.</h1>
+    <p class="muted">Monitor your classroom, practise challenging questions and track your progress.</p>
+    <button class="btn" onclick="openPage('noise')">Start noise scan</button>
+    <button class="btn secondary" onclick="openPage('mcq')">Start MCQ challenge</button>
+   </div>
+   <div class="grid">
+    <div class="card"><div class="stat" id="statQuestions">0</div><div class="statlabel">Questions attempted</div></div>
+    <div class="card"><div class="stat" id="statAccuracy">0%</div><div class="statlabel">Overall accuracy</div></div>
+    <div class="card"><div class="stat" id="statRounds">0</div><div class="statlabel">Rounds completed</div></div>
+    <div class="card"><div class="stat" id="statScans">0</div><div class="statlabel">Noise scans</div></div>
+   </div>
+   <div class="two" style="margin-top:15px">
+    <div class="card"><h3>Learning performance</h3><canvas id="dashChart"></canvas></div>
+    <div class="card"><h3>Recent activity</h3><div id="recentActivity" class="small">No activity yet.</div></div>
+   </div>
+  </section>
 
-  <div class="buttons">
-   <button class="btn secondary" id="voiceBtn">🎙 Speak</button>
-   <button class="btn secondary" id="speakBtn">🔊 Read last reply</button>
-  </div>
-  <p class="small" id="chatStatus" style="margin-top:12px">
-   AI connection is not configured yet.
-  </p>
- </div>
-</section>
+  <!-- NOISE -->
+  <section class="page" id="page-noise">
+   <div class="hero"><span class="pill">MICROPHONE ANALYSIS</span><h1>Noise Monitor</h1><p class="muted">Live sound analysis in your browser. Audio is processed locally and is not recorded or uploaded.</p></div>
+   <div class="two">
+    <div class="card">
+     <h3>Scan configuration</h3>
+     <label>School / Location<input id="scanLocation" placeholder="School name"></label>
+     <label>Class<input id="scanClass" placeholder="Class 10 A"></label>
+     <label>Total students<input type="number" id="totalStudents" min="1" placeholder="44"></label>
+     <label>Students present<input type="number" id="presentStudents" min="0" placeholder="38"></label>
+     <label>Activity<select id="activity"><option>Regular lesson</option><option>Group discussion</option><option>Examination</option><option>Break</option><option>Assembly</option></select></label>
+     <label>Duration<select id="duration"><option value="5">5 seconds</option><option value="10">10 seconds</option><option value="30" selected>30 seconds</option><option value="300">5 minutes</option><option value="0">Continuous until stopped</option></select></label>
+     <div class="notice">Student count is stored as context only. It never changes the measured sound score.</div><br>
+     <button class="btn" id="startScan" onclick="startScan()">Allow microphone & Start</button>
+     <button class="btn danger hidden" id="stopScanBtn" onclick="stopScan()">Stop scan</button>
+     <p id="scanStatus" class="small">Microphone is off.</p>
+    </div>
+    <div class="card">
+     <h3>Live noise intensity</h3>
+     <div class="gauge" id="gauge"><div class="gaugeContent"><strong id="noiseScore">--</strong><span class="small">Index / 100</span></div></div>
+     <div style="text-align:center"><b id="noiseLabel">Waiting for scan</b></div>
+     <div class="small" style="text-align:center">Relative custom index, not calibrated dB SPL.</div>
+     <div class="line"><span>Estimated input level</span><b id="noiseDb">-- dBFS</b></div>
+     <div class="line"><span>Peak index</span><b id="noisePeak">--</b></div>
+     <div class="line"><span>Elapsed</span><b id="elapsed">0 sec</b></div>
+     <div class="line"><span>Average index</span><b id="noiseAverage">--</b></div>
+    </div>
+   </div>
+   <div class="card"><h3>Live sound trend</h3><canvas id="noiseChart"></canvas></div>
+   <div class="card"><h3>Last scan report</h3><div id="lastScanReport" class="small">No scan completed.</div></div>
+  </section>
 
-<!-- HISTORY -->
+  <!-- CLASS MAPPER -->
+  <section class="page" id="page-mapper">
+   <div class="hero"><span class="pill">CLASSROOM ORGANISATION</span><h1>Class Mapper</h1><p class="muted">Save classroom details and associate scans with a class. A real spatial heatmap needs readings from multiple locations or devices.</p></div>
+   <div class="card">
+    <h3>Add classroom</h3>
+    <label>Class name<input id="mapClass" placeholder="Class 10 A"></label>
+    <label>Total students<input type="number" id="mapCount" min="1" placeholder="44"></label>
+    <button class="btn" onclick="saveClass()">Save classroom</button>
+    <div id="classList" style="margin-top:15px"></div>
+   </div>
+  </section>
 
-<section class="page" id="history">
- <div class="card">
-  <h2>◷ Scan History</h2>
-  <p class="muted">Your saved scan records appear here.</p>
-  <div id="historyList"></div>
-  <button class="btn secondary" id="clearHistory" style="width:100%;margin-top:15px">Clear history</button>
- </div>
+  <!-- MCQ -->
+  <section class="page" id="page-mcq">
+   <div class="hero"><span class="pill">ADVANCED LEARNING</span><h1>MCQ Academy</h1><p class="muted">Expert-level mixed-subject practice. Complete a short round, review your results, and continue whenever you want.</p></div>
+   <div class="card" id="quizSetup">
+    <h3>Configure challenge</h3>
+    <label>Questions per round<select id="roundSize"><option value="10">10 questions</option><option value="20">20 questions</option></select></label>
+    <label>Subject<select id="quizSubject"><option>Mixed subjects</option><option>Physics</option><option>Chemistry</option><option>Mathematics</option><option>Biology</option><option>Computer Science</option></select></label>
+    <button class="btn" onclick="beginQuiz()">Start Expert Challenge</button>
+    <p class="small" id="bankCount"></p>
+    <div class="notice">This version contains 20 starter questions. The full 500+ verified question bank is a separate content expansion.</div>
+   </div>
+   <div class="card hidden" id="quizPlay">
+    <div style="display:flex;justify-content:space-between"><b id="quizSubjectTitle">Mixed subjects</b><span class="small" id="questionCounter"></span></div>
+    <div class="progress" style="margin:14px 0"><div id="quizProgress"></div></div>
+    <div class="question" id="questionText"></div>
+    <div id="options"></div>
+    <p class="small" id="answerFeedback"></p>
+    <div style="display:flex;justify-content:space-between;gap:8px;margin-top:15px">
+     <button class="btn secondary" onclick="endQuizEarly()">End round</button>
+     <button class="btn" id="nextQuestion" onclick="nextQuestion()" disabled>Next question</button>
+    </div>
+   </div>
+   <div class="card hidden" id="quizResult">
+    <span class="pill">ROUND RESULTS</span><h2>Challenge completed</h2>
+    <div class="stat" id="resultScore">0/10</div><h3 id="resultRating"></h3>
+    <div class="progress"><div id="resultBar"></div></div>
+    <div class="three" style="margin-top:15px">
+     <div class="card"><div class="stat" id="resultCorrect">0</div><div class="statlabel">Correct</div></div>
+     <div class="card"><div class="stat" id="resultWrong">0</div><div class="statlabel">Incorrect</div></div>
+     <div class="card"><div class="stat" id="resultPercent">0%</div><div class="statlabel">Accuracy</div></div>
+    </div>
+    <h3>Answer review</h3><div id="answerReview"></div>
+    <button class="btn" style="margin-top:15px" onclick="continueQuiz()">Continue with another round</button>
+    <button class="btn secondary" style="margin-top:15px" onclick="resetQuiz()">Back to Academy</button>
+   </div>
+  </section>
 
- <div class="card">
-  <h2>☆ Favourites</h2>
-  <div id="favouriteList"></div>
- </div>
-</section>
+  <!-- ARENA -->
+  <section class="page" id="page-arena">
+   <div class="hero"><span class="pill">CHALLENGE ARENA</span><h1>Compete with yourself</h1><p class="muted">Build a personal record through advanced practice rounds.</p></div>
+   <div class="card"><h3>Your best performance</h3><div class="stat" id="arenaBest">0%</div><p class="muted">Best recorded round accuracy</p><button class="btn" onclick="openPage('mcq')">Start a challenge</button></div>
+  </section>
 
-<!-- SETTINGS -->
+  <!-- ASSISTANT -->
+  <section class="page" id="page-assistant">
+   <div class="hero"><span class="pill">NOISEMAP HELPER</span><h1>Assistant</h1><p class="muted">A built-in guide for using NOISEMAP.</p></div>
+   <div class="card">
+    <div id="chatMessages" style="min-height:180px"><p class="notice">Hello! Ask me about noise scans, MCQ Academy, profiles or reports. This is an offline help assistant, not a connected AI model.</p></div>
+    <form id="chatForm"><input id="chatInput" placeholder="Ask something about NOISEMAP..." required><button class="btn" style="margin-top:10px">Send</button></form>
+   </div>
+  </section>
 
-<section class="page" id="settings">
- <div class="card">
-  <h2>⚙ Settings</h2>
-  <div class="settings-row">
-   <span>Website name</span><b>RANOVA AI</b>
-  </div>
-  <div class="settings-row">
-   <span>Version</span><b>1.0</b>
-  </div>
-  <div class="settings-row">
-   <span>Voice support</span><b>Browser dependent</b>
-  </div>
-  <div class="settings-row">
-   <span>AI connection</span><b style="color:#f6c96c">Not connected</b>
-  </div>
- </div>
+  <!-- ANALYTICS -->
+  <section class="page" id="page-analytics">
+   <div class="hero"><span class="pill">PERFORMANCE DATA</span><h1>Analytics</h1></div>
+   <div class="grid">
+    <div class="card"><div class="stat" id="anaQuestions">0</div><div class="statlabel">Questions</div></div>
+    <div class="card"><div class="stat" id="anaAccuracy">0%</div><div class="statlabel">Accuracy</div></div>
+    <div class="card"><div class="stat" id="anaScans">0</div><div class="statlabel">Scans</div></div>
+    <div class="card"><div class="stat" id="anaBest">0%</div><div class="statlabel">Best round</div></div>
+   </div>
+   <div class="card"><h3>Round performance</h3><canvas id="analyticsChart"></canvas></div>
+   <div class="card"><h3>Subject performance</h3><div id="subjectStats" class="small">Complete some quizzes to see subject statistics.</div></div>
+  </section>
 
- <div class="card">
-  <h2>About RANOVA</h2>
-  <p class="muted">
-   RANOVA AI is a universal AI assistant and scanning project.
-   Created with the vision of making information easier to understand.
-  </p>
-  <h3>Founders</h3>
-  <p class="muted">Raj • Arup • Nathan</p>
-  <h3>Our slogan</h3>
-  <p class="gradient"><b>THREE MINDS. ONE VISION.</b></p>
- </div>
-</section>
+  <!-- REPORTS -->
+  <section class="page" id="page-reports">
+   <div class="hero"><span class="pill">YOUR RECORDS</span><h1>Reports & History</h1><p class="muted">Review your local scan and quiz history.</p></div>
+   <div class="card"><h3>Export report</h3><p class="small">Download your activity summary as a text report.</p><button class="btn" onclick="exportReport()">Download report</button></div>
+   <div class="card"><h3>Quiz history</h3><div id="quizHistory"></div></div>
+   <div class="card"><h3>Noise scan history</h3><div id="scanHistory"></div></div>
+  </section>
 
-</main>
+  <!-- PROFILE -->
+  <section class="page" id="page-profile">
+   <div class="hero"><span class="pill">PERSONAL PROFILE</span><h1>My Profile</h1></div>
+   <div class="card">
+    <h3>Account details</h3>
+    <div class="line"><span>Name</span><b id="profileName"></b></div>
+    <div class="line"><span>Email</span><b id="profileEmail"></b></div>
+    <div class="line"><span>School</span><b id="profileSchool"></b></div>
+    <div class="line"><span>Class / Role</span><b id="profileClass"></b></div>
+   </div>
+   <div class="card"><h3>My achievements</h3><div id="achievements" class="small"></div></div>
+  </section>
 
-<footer>
- <b>RANOVA AI</b><br>
- SCAN ANYTHING. KNOW EVERYTHING.<br>
- Created by Raj • Arup • Nathan
-</footer>
+  <!-- SETTINGS -->
+  <section class="page" id="page-settings">
+   <div class="hero"><span class="pill">PREFERENCES</span><h1>Settings</h1></div>
+   <div class="card">
+    <h3>Local account settings</h3>
+    <p class="small">Your demo profile and activity are stored in this browser.</p>
+    <button class="btn secondary" onclick="exportReport()">Export my data</button>
+    <button class="btn danger" onclick="clearMyData()">Clear local activity</button>
+   </div>
+   <div class="card"><h3>About NOISEMAP</h3><p class="muted">A classroom noise intelligence and advanced learning prototype.</p><p class="small">Founder: Arup Sinha | CEO: Raj Chorei | Co-Founder: Nathan Ranglong</p></div>
+  </section>
+ </main>
+</div>
 
 <script>
 "use strict";
+const $=id=>document.getElementById(id);
+const store={
+ get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},
+ set(k,v){localStorage.setItem(k,JSON.stringify(v))}
+};
+let currentUser=null,profile=null,authMode="login";
+let scanStream=null,audioCtx=null,analyser=null,scanTimer=null,scanStarted=0;
+let scanValues=[],scanPeak=0,scanRunning=false,raf=0;
+let quiz=[],quizIndex=0,quizAnswers=[],selected=-1,quizDone=false;
 
-const $ = id => document.getElementById(id);
-
-let selectedFile = null;
-let lastReply = "";
-let lastScan = "";
-let history = [];
-let favourites = [];
-
-try {
- history = JSON.parse(localStorage.getItem("ranova_history") || "[]");
- favourites = JSON.parse(localStorage.getItem("ranova_favourites") || "[]");
-} catch(e) {
- history = [];
- favourites = [];
-}
-
-function saveData() {
- try {
-  localStorage.setItem("ranova_history", JSON.stringify(history));
-  localStorage.setItem("ranova_favourites", JSON.stringify(favourites));
- } catch(e) {
-  console.warn("Local storage unavailable", e);
- }
-}
-
-document.querySelectorAll(".tab").forEach(button => {
- button.addEventListener("click", () => {
-  document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  button.classList.add("active");
-  $(button.dataset.page).classList.add("active");
-  if(button.dataset.page === "history") renderHistory();
- });
-});
-
-function selectPage(page) {
- document.querySelector('[data-page="'+page+'"]').click();
-}
-
-function chooseFile(useCamera) {
- const input = $("imageInput");
- input.value = "";
- if(useCamera) input.setAttribute("capture","environment");
- else input.removeAttribute("capture");
- input.click();
-}
-
-$("cameraBtn").addEventListener("click", () => chooseFile(true));
-$("galleryBtn").addEventListener("click", () => chooseFile(false));
-
-$("imageInput").addEventListener("change", event => {
- const file = event.target.files[0];
- if(!file) return;
-
- if(!file.type.startsWith("image/")) {
-  $("scanStatus").textContent = "Please choose a valid image.";
-  return;
- }
-
- if(file.size > 12 * 1024 * 1024) {
-  $("scanStatus").textContent = "Please choose an image smaller than 12 MB.";
-  return;
- }
-
- selectedFile = file;
- const reader = new FileReader();
-
- reader.onload = e => {
-  $("preview").src = e.target.result;
-  $("preview").style.display = "block";
-  $("scanStatus").textContent = "Image selected successfully. Ready for AI connection.";
-  $("scanResult").hidden = true;
-  $("saveScan").style.display = "none";
- };
-
- reader.onerror = () => {
-  $("scanStatus").textContent = "Could not read this image.";
- };
-
- reader.readAsDataURL(file);
-});
-
-$("analyzeBtn").addEventListener("click", () => {
- if(!selectedFile) {
-  $("scanStatus").textContent = "Please select an image first.";
-  return;
- }
-
- $("scanStatus").textContent =
- "Image is ready, but real AI image recognition has not been connected. This version does not invent scan results.";
-
- $("scanResult").hidden = false;
- $("scanResult").textContent =
- "IMAGE RECEIVED\n\nYour image has been selected successfully.\n\nAI identification requires a connected AI service. Once connected, RANOVA can return an identification, description, characteristics, uses, interesting facts and safety information.";
-
- lastScan = "Image: " + selectedFile.name;
- $("saveScan").style.display = "block";
-
- history.unshift({
-  name:selectedFile.name,
-  date:new Date().toLocaleString(),
-  result:"Image selected; AI analysis pending connection."
- });
- history = history.slice(0,50);
- saveData();
-});
-
-$("saveScan").addEventListener("click", () => {
- if(!lastScan) return;
- if(!favourites.includes(lastScan)) {
-  favourites.unshift(lastScan);
-  saveData();
- }
- $("saveScan").textContent = "✓ Saved";
- renderHistory();
-});
-
-function addMessage(text,type) {
- const div = document.createElement("div");
- div.className = "message " + type;
- div.textContent = text;
- $("chatbox").appendChild(div);
- $("chatbox").scrollTop = $("chatbox").scrollHeight;
-}
-
-function sendMessage() {
- const input = $("chatInput");
- const text = input.value.trim();
- if(!text) return;
-
- addMessage(text,"user");
- input.value = "";
-
- lastReply =
- "Your message has been received. RANOVA's real AI chat service has not been connected yet. Connect an AI backend to receive intelligent answers.";
-
- addMessage(lastReply,"bot");
- $("chatStatus").textContent = "AI backend connection required.";
-}
-
-$("sendBtn").addEventListener("click",sendMessage);
-$("chatInput").addEventListener("keydown",event => {
- if(event.key === "Enter") sendMessage();
-});
-
-$("voiceBtn").addEventListener("click",() => {
- const SpeechRecognition =
- window.SpeechRecognition || window.webkitSpeechRecognition;
-
- if(!SpeechRecognition) {
-  $("chatStatus").textContent = "Voice recognition is not supported in this browser.";
-  return;
- }
-
- const recognition = new SpeechRecognition();
- recognition.lang = "en-IN";
- recognition.interimResults = false;
-
- $("chatStatus").textContent = "Listening...";
-
- recognition.onresult = event => {
-  $("chatInput").value = event.results[0][0].transcript;
-  $("chatStatus").textContent = "Voice captured. Press SEND to submit.";
- };
-
- recognition.onerror = () => {
-  $("chatStatus").textContent = "Microphone unavailable or permission denied.";
- };
-
- recognition.onend = () => {
-  if(!$("chatInput").value) $("chatStatus").textContent = "Voice input ended.";
- };
-
- recognition.start();
-});
-
-$("speakBtn").addEventListener("click",() => {
- if(!lastReply) {
-  $("chatStatus").textContent = "There is no reply to read yet.";
-  return;
- }
-
- if(!("speechSynthesis" in window)) {
-  $("chatStatus").textContent = "Speech output is not supported.";
-  return;
- }
-
- speechSynthesis.cancel();
- const utterance = new SpeechSynthesisUtterance(lastReply);
- utterance.lang = "en-IN";
- speechSynthesis.speak(utterance);
-});
-
-function renderHistory() {
- const list = $("historyList");
- list.replaceChildren();
-
- if(!history.length) {
-  list.innerHTML = '<div class="empty">No scan history yet.</div>';
- } else {
-  history.forEach(item => {
-   const div = document.createElement("div");
-   div.className = "item";
-   const title = document.createElement("b");
-   title.textContent = item.name;
-   const date = document.createElement("p");
-   date.className = "small";
-   date.textContent = item.date;
-   const description = document.createElement("p");
-   description.textContent = item.result;
-   div.append(title,date,description);
-   list.appendChild(div);
-  });
- }
-
- const favList = $("favouriteList");
- favList.replaceChildren();
-
- if(!favourites.length) {
-  favList.innerHTML = '<div class="empty">No favourites saved yet.</div>';
- } else {
-  favourites.forEach(item => {
-   const div = document.createElement("div");
-   div.className = "item";
-   div.textContent = "☆ " + item;
-   favList.appendChild(div);
-  });
- }
-}
-
-$("clearHistory").addEventListener("click",() => {
- if(!confirm("Clear all scan history?")) return;
- history = [];
- saveData();
- renderHistory();
-});
-
-renderHistory();
-</script>
-
-</body>
-</html>
+function userKey(s){return "noisemap_"+currentUser+"_"+s}
+function getData(s,d){return store.get(userKey(s),d)}
+function putData(s,v){store.set(userKey(s),v)}
+function setAuth(mode){
+ authMode=mode;
+ $("authTitle").textContent=mode==="login"?"Welcome bac
