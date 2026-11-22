@@ -3,416 +3,671 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#07111f">
+<meta name="theme-color" content="#0b0d16">
 <title>NOISEMAP | Smart Noise Intelligence</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
---bg:#07111f;--panel:#101e31;--panel2:#172941;
---text:#eef5ff;--muted:#9db0c9;--cyan:#22d3ee;
---green:#34d399;--red:#fb7185;--border:#263b56;
+--bg:#090b14;--panel:#151827;--panel2:#20243a;
+--pink:#f09bd7;--purple:#a995ff;--text:#f3f0ff;
+--muted:#a7a9c3;--line:#35344f;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
-header{padding:18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.logo{font-size:23px;font-weight:bold;color:var(--cyan)}
-small{color:var(--muted)}
-button,input,textarea{font:inherit}
-button{background:var(--cyan);color:#06121e;border:none;padding:12px 16px;border-radius:10px;font-weight:bold;cursor:pointer}
-button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border)}
-button.danger{background:var(--red)}
-input,textarea{width:100%;padding:12px;margin:7px 0;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:10px}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:18px;margin:12px 0}
-h1,h2,h3{margin-top:0}
-h2{font-size:21px}
-p{line-height:1.5}
+body{
+margin:0;background:radial-gradient(ellipse at top,#24213c 0%,#0c0e18 48%,#080a12 100%);
+color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh
+}
+button,input,select{font:inherit}
+button{
+cursor:pointer;border:1px solid var(--line);
+background:linear-gradient(135deg,#282641,#171929);
+color:var(--text);padding:12px 16px;border-radius:14px;
+font-weight:700;transition:.2s
+}
+button:hover{border-color:var(--purple);transform:translateY(-1px)}
+button.primary{background:linear-gradient(120deg,#b49cff,#e7a6db);color:#171222;border:0}
+button:disabled{opacity:.45;cursor:default;transform:none}
+.wrap{max-width:980px;margin:auto;padding:22px 16px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:900;letter-spacing:3px;font-size:1.2rem}
+.brand span{color:var(--purple)}
+.pill{font-size:.8rem;border:1px solid var(--line);border-radius:30px;padding:7px 10px;color:var(--muted)}
+.hero{text-align:center;padding:35px 8px 22px}
+.hero h1{font-size:clamp(2.2rem,8vw,4rem);letter-spacing:5px;margin:8px 0}
+.hero h1 span{color:var(--purple)}
+.hero p{color:var(--muted);max-width:650px;margin:auto}
+.creators{font-size:.9rem;letter-spacing:1px;margin-top:18px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.creator{font-weight:800;animation:softGlow 4s ease-in-out infinite alternate}
+.creator:nth-child(1){color:#c5a9ff}
+.creator:nth-child(2){color:#a9c5ff;animation-delay:1s}
+.creator:nth-child(3){color:#e7b6ed;animation-delay:2s}
+@keyframes softGlow{
+from{text-shadow:0 0 3px currentColor;opacity:.88}
+to{text-shadow:0 0 9px currentColor;opacity:1}
+}
+.tagline{font-weight:800;color:#d2b9ff;margin-top:12px;letter-spacing:.4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.panel{
+background:linear-gradient(150deg,rgba(32,34,53,.96),rgba(15,17,28,.96));
+border:1px solid var(--line);border-radius:22px;padding:20px;
+box-shadow:0 15px 40px #0004
+}
+.panel h2,.panel h3{margin-top:0}
 .muted{color:var(--muted)}
-#authScreen{max-width:440px;margin:35px auto;padding:20px}
-#appScreen{display:none}
-nav{display:flex;gap:8px;padding:12px;overflow-x:auto;background:var(--panel)}
-nav button{white-space:nowrap}
-main{padding:14px;max-width:1000px;margin:auto}
-.page{display:none}
-.page.active{display:block}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.stat{font-size:28px;font-weight:bold;color:var(--cyan)}
-.notice{padding:12px;border-radius:10px;background:var(--panel2);margin:10px 0}
-#scanBar{height:18px;background:#263b56;border-radius:20px;overflow:hidden;margin:15px 0}
-#scanFill{height:100%;width:0;background:var(--green);transition:width .2s}
-#scanValue{font-size:35px;font-weight:bold;color:var(--cyan)}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}
+.nav button{flex:1;min-width:105px}
 .hidden{display:none!important}
-footer{text-align:center;padding:25px;color:var(--muted)}
+.field{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.field label{color:var(--muted);font-size:.9rem}
+input,select{
+width:100%;background:#111424;color:var(--text);
+border:1px solid var(--line);padding:12px;border-radius:12px
+}
+.orbarea{display:flex;align-items:center;justify-content:center;flex-direction:column;min-height:250px}
+.orb{
+width:180px;height:180px;border-radius:50%;
+background:radial-gradient(circle at 35% 30%,#e9e5ff 0%,#bba5ff 12%,#8065d9 40%,#443a82 67%,#101323 80%);
+box-shadow:0 0 25px #a995ff66,0 0 80px #6854d955,inset -20px -30px 45px #101323;
+position:relative;transition:transform .08s,filter .08s
+}
+.orb:before,.orb:after{
+content:"";position:absolute;inset:-12px;border-radius:50%;
+border:1px solid #bba5ff33;box-shadow:0 0 25px #a995ff22;
+animation:orbit 8s linear infinite
+}
+.orb:after{inset:-23px;border-color:#9b8cff25;animation-duration:12s;animation-direction:reverse}
+@keyframes orbit{to{transform:rotate(360deg)}}
+.orb.scanning{animation:pulse .8s ease-in-out infinite alternate}
+@keyframes pulse{
+to{filter:brightness(1.4);box-shadow:0 0 50px #a995ff,0 0 90px #6654d988,inset -20px -30px 45px #101323}
+}
+.count{font-size:2rem;font-weight:800;margin:12px}
+.meter{height:10px;border-radius:20px;background:#090b14;overflow:hidden;border:1px solid var(--line)}
+.meter div{height:100%;width:0;background:linear-gradient(90deg,var(--purple),#d9a8e7);transition:width .15s}
+.stat{font-size:2rem;font-weight:800;color:var(--purple)}
+canvas{width:100%;height:140px;background:#111424;border-radius:12px;margin-top:12px;border:1px solid var(--line)}
+.list{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.badge{padding:5px 9px;border-radius:9px;background:#343151;color:#e4dcff;font-size:.82rem}
+.small{font-size:.83rem}
+.answer{display:block;width:100%;text-align:left;margin:8px 0}
+.good{border-color:#36d7a4!important}
+.bad{border-color:#ff8585!important}
+.footer{text-align:center;color:var(--muted);margin:30px 0;font-size:.8rem}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+.profilebar{display:flex;justify-content:space-between;align-items:center;margin:16px 0;gap:12px}
+.profile-left{display:flex;align-items:center;gap:12px}
+.avatar-img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--purple)}
+.avatar-fallback{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#343151;color:#d2b9ff;font-size:1.4rem}
+.answer:disabled{cursor:default}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.daycell{background:#171a2a;border:1px solid var(--line);border-radius:12px;text-align:center;padding:10px 3px}
+.daycell b{display:block}
+.toast{color:#cdbdff;min-height:20px}
+@media(max-width:600px){
+.hero{padding-top:22px}
+.nav button{min-width:90px;font-size:.85rem}
+.panel{padding:16px}
+}
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<header>
-<div><div class="logo">NOISEMAP</div><small>Smart Noise Intelligence</small></div>
-<button id="logoutBtn" class="secondary hidden" onclick="logout()">Logout</button>
+<header class="top">
+<div class="brand">NOISE<span>MAP</span></div>
+<div class="pill">SMART NOISE INTELLIGENCE</div>
 </header>
 
-<section id="authScreen">
-<div class="card">
-<h1 id="authTitle">Welcome to NOISEMAP</h1>
-<p class="muted">Monitor noise, map classrooms and learn about sound.</p>
-<div id="nameBox" class="hidden">
-<label>Full name</label><input id="fullName" placeholder="Enter your name">
+<section id="welcome" class="hero">
+<h1>NOISE<span>MAP</span></h1>
+<p>Map sound activity. Explore knowledge. Make spaces more mindful.</p>
+<div class="tagline">Be smart like RJ. Map the noise. Master the moment.</div>
+
+<div class="creators">
+<span class="creator">RAJ CHOREI</span>
+<span>·</span>
+<span class="creator">ARUP SINHA</span>
+<span>·</span>
+<span class="creator">NATHAN RANGLONG</span>
 </div>
-<label>Email</label><input id="email" type="email" placeholder="Enter email">
-<label>Password</label><input id="password" type="password" placeholder="Enter password">
-<button id="authButton" style="width:100%" onclick="authenticate()">Login</button>
-<p id="authMessage" class="muted"></p>
-<button class="secondary" style="width:100%" onclick="toggleAuth()">Switch to Sign Up</button>
+
+<div class="panel" style="max-width:520px;margin:24px auto;text-align:left">
+<h2>Welcome</h2>
+<div class="field">
+<label>Optional username</label>
+<input id="username" placeholder="Choose a name (optional)">
+</div>
+<div class="field">
+<label>Optional profile picture</label>
+<input id="avatar" type="file" accept="image/*">
+</div>
+<button class="primary" onclick="enterApp()">Enter NOISEMAP</button>
+<button onclick="enterApp()">Skip</button>
 </div>
 </section>
 
-<section id="appScreen">
-<nav>
-<button onclick="showPage('home')">Home</button>
-<button onclick="showPage('scanner')">Scanner</button>
-<button onclick="showPage('classroom')">Classroom</button>
-<button onclick="showPage('academy')">Academy</button>
-<button onclick="showPage('challenge')">Challenge</button>
-<button onclick="showPage('assistant')">Assistant</button>
-<button onclick="showPage('reports')">Reports</button>
-<button onclick="showPage('profile')">Profile</button>
-</nav>
+<div id="app" class="hidden">
 
-<main>
+<div class="profilebar panel">
+<div class="profile-left">
+<img id="profilePhoto" alt="Profile" class="avatar-img hidden">
+<div id="profileFallback" class="avatar-fallback">☺</div>
+<div>
+<b id="profileName">NOISEMAP User</b>
+<div class="small muted">Personal dashboard</div>
+</div>
+</div>
+<button onclick="showTab('dashboard')">Dashboard</button>
+</div>
 
-<div id="home" class="page active">
-<h1>Dashboard</h1>
-<p id="welcomeText" class="muted"></p>
+<div class="nav">
+<button onclick="showTab('scan')">Noise Scan</button>
+<button onclick="showTab('timetable')">Timetable</button>
+<button onclick="showTab('focus')">Focus</button>
+<button onclick="showTab('progress')">Progress</button>
+<button onclick="showTab('quiz')">Brain Challenge</button>
+<button onclick="showTab('history')">History</button>
+<button onclick="showTab('settings')">Themes</button>
+</div>
+
+<section id="dashboard" class="tab panel hidden">
+<h2>Activity Dashboard</h2>
+<div id="dashSummary" class="grid"></div>
+<p class="muted">Your activities are stored on this device.</p>
+</section>
+
+<section id="timetable" class="tab panel hidden">
+<h2>Weekly Timetable</h2>
 <div class="grid">
-<div class="card"><h3>Noise Scanner</h3><div class="stat">Scan</div><p class="muted">Estimate relative sound intensity.</p><button onclick="showPage('scanner')">Open Scanner</button></div>
-<div class="card"><h3>Classroom Mapper</h3><div class="stat" id="roomCount">0</div><p class="muted">Saved classroom records</p><button onclick="showPage('classroom')">Open Mapper</button></div>
-<div class="card"><h3>MCQ Academy</h3><div class="stat">Learn</div><p class="muted">Learn about sound and noise.</p><button onclick="showPage('academy')">Start Learning</button></div>
-<div class="card"><h3>Challenge Arena</h3><div class="stat" id="challengeScore">0</div><p class="muted">Quiz points earned</p><button onclick="showPage('challenge')">Play</button></div>
+<div class="field">
+<label>Day</label>
+<select id="ttDay">
+<option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+<option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+</select>
 </div>
+<div class="field"><label>Time</label><input id="ttTime" type="time"></div>
+<div class="field"><label>Subject / activity</label><input id="ttSubject" placeholder="e.g. Maths"></div>
 </div>
-
-<div id="scanner" class="page">
-<h1>Noise Scanner</h1>
-<div class="card">
-<p class="muted">This scanner estimates relative microphone sound intensity. It is not a calibrated sound meter.</p>
-<div id="scanValue">--</div>
-<div id="scanBar"><div id="scanFill"></div></div>
-<div id="scanLabel">Scanner inactive</div>
-<button onclick="startScanner()">Start Scan</button>
-<button class="secondary" onclick="stopScanner()">Stop</button>
-<p id="scanMessage" class="muted"></p>
-</div>
-</div>
-
-<div id="classroom" class="page">
-<h1>Classroom Mapper</h1>
-<div class="card">
-<label>Classroom name</label><input id="roomName" placeholder="e.g. Class 8A">
-<label>Location</label><input id="roomLocation" placeholder="e.g. North Wing">
-<label>Observation</label><textarea id="roomNotes" placeholder="Describe the sound environment"></textarea>
-<label>Relative noise level (0–100)</label><input id="roomLevel" type="number" min="0" max="100" placeholder="0–100">
-<button onclick="saveRoom()">Save Classroom</button>
-</div>
-<div class="card"><h3>Saved Classrooms</h3><div id="roomList"></div></div>
-</div>
-
-<div id="academy" class="page">
-<h1>MCQ Academy</h1>
-<div class="card"><h3>Learn about sound</h3>
-<p>Sound is produced by vibrations. It travels through materials such as air, water and solids. Sound intensity and frequency are different properties.</p></div>
-<div class="card"><h3>Quiz</h3><div id="academyQuiz"></div><button onclick="startAcademy()">Start / Restart Quiz</button></div>
-</div>
-
-<div id="challenge" class="page">
-<h1>Challenge Arena</h1>
-<div class="card"><p>Answer questions and collect points.</p><div id="challengeQuiz"></div><button onclick="startChallenge()">Start / Restart Challenge</button></div>
-</div>
-
-<div id="assistant" class="page">
-<h1>NOISEMAP Assistant</h1>
-<div class="card">
-<p>Ask about sound, noise pollution, classrooms or the scanner.</p>
-<input id="question" placeholder="Ask a question">
-<button onclick="askAssistant()">Ask</button>
-<div class="notice" id="answer">Your answers will appear here.</div>
-</div>
-</div>
-
-<div id="reports" class="page">
-<h1>Reports</h1>
-<div class="card"><h3>Classroom Records</h3><div id="reportList"></div></div>
-<div class="card"><h3>Learning Progress</h3><p id="progressText">0 challenge points</p></div>
-<button onclick="refreshReports()">Refresh Reports</button>
-</div>
-
-<div id="profile" class="page">
-<h1>Profile</h1>
-<div class="card">
-<p><b>Name:</b> <span id="profileName"></span></p>
-<p><b>Email:</b> <span id="profileEmail"></span></p>
-<p><b>Project:</b> NOISEMAP</p>
-<p><b>Points:</b> <span id="profilePoints">0</span></p>
-</div>
-</div>
-
-</main>
+<button class="primary" onclick="addTimetable()">Add to timetable</button>
+<div id="ttList" class="list" style="margin-top:14px"></div>
 </section>
 
-<footer>NOISEMAP | Smart Noise Intelligence</footer>
+<section id="focus" class="tab panel hidden">
+<h2>Focus Timer</h2>
+<p class="muted">Choose a focus length, start, and pause when needed.</p>
+<select id="focusLength">
+<option value="15">15 minutes</option>
+<option value="25" selected>25 minutes</option>
+<option value="45">45 minutes</option>
+<option value="60">60 minutes</option>
+</select>
+<div class="stat" id="focusDisplay">25:00</div>
+<button class="primary" onclick="startFocus()">Start</button>
+<button onclick="pauseFocus()">Pause</button>
+<button onclick="resetFocus()">Reset</button>
+<p id="focusMsg" class="small muted"></p>
+</section>
 
+<section id="progress" class="tab panel hidden">
+<h2>Weekly Progress</h2>
+<div id="progressView"></div>
+</section>
+
+<section id="scan" class="tab panel">
+<h2>Noise Mapper</h2>
+<p class="muted">Analyse sound intensity for a short period. Audio is processed in your browser and is not saved.</p>
+<div class="grid">
+<div class="field">
+<label>Students present (optional context)</label>
+<input id="students" type="number" min="0" placeholder="e.g. 32">
+</div>
+<div class="field">
+<label>Scan duration</label>
+<select id="duration">
+<option value="5">5 seconds</option>
+<option value="10" selected>10 seconds</option>
+<option value="30">30 seconds</option>
+<option value="60">60 seconds</option>
+</select>
+</div>
+</div>
+<div class="orbarea">
+<div id="orb" class="orb"></div>
+<div id="count" class="count">READY</div>
+<div id="status" class="muted">Tap start to begin</div>
+</div>
+<div class="meter"><div id="scanProgress"></div></div>
+<div class="row" style="margin-top:14px">
+<div>
+<div class="muted small">Live relative intensity</div>
+<div class="stat"><span id="live">--</span><span class="small"> /100</span></div>
+</div>
+<button id="start" class="primary" onclick="startScan()">Start mapping</button>
+</div>
+<canvas id="graph" width="900" height="220"></canvas>
+<div id="result" class="panel hidden" style="margin-top:16px"></div>
+</section>
+
+<section id="quiz" class="tab panel hidden">
+<h2>Brain Challenge</h2>
+<p class="muted">Challenging questions across science, mathematics, technology, logic and environment.</p>
+<div class="row">
+<select id="category">
+<option>Mixed</option><option>Science</option><option>Math</option>
+<option>Technology</option><option>Logic</option>
+<option>Environment</option><option>General Knowledge</option>
+</select>
+<select id="roundSize"><option value="10">10 questions</option><option value="20">20 questions</option></select>
+<select id="difficulty"><option>Advanced</option><option>Expert</option><option>Master</option></select>
+<button class="primary" onclick="startQuiz()">Start round</button>
+</div>
+<div id="quizbox" style="margin-top:20px"></div>
+</section>
+
+<section id="history" class="tab panel hidden">
+<h2>Scan History</h2>
+<button onclick="clearHistory()">Clear history</button>
+<div id="historyList" class="list" style="margin-top:14px"></div>
+</section>
+
+<section id="settings" class="tab panel hidden">
+<h2>Appearance</h2>
+<p>Change the glow and background mood.</p>
+<select id="theme" onchange="setTheme(this.value)">
+<option value="violet">Violet night</option>
+<option value="blue">Midnight blue</option>
+<option value="green">Emerald</option>
+</select>
+<p class="small muted">Settings and scan history are stored locally in this browser. They won't sync across devices.</p>
+</section>
+</div>
+
+<div class="footer">NOISEMAP · No audio recordings stored · Relative intensity only, not calibrated decibel measurement</div>
+</div>
 <script>
-// SUPABASE CONFIGURATION
-const SUPABASE_URL = "https://nqfoelowoeamrazqwwws.supabase.co";
+let scans=JSON.parse(localStorage.getItem("nm_scans")||"[]");
+let timetable=JSON.parse(localStorage.getItem("nm_tt")||"[]");
+let focusTotal=Number(localStorage.getItem("nm_focus")||0);
+let audioCtx,analyser,mic,stream,scanTimer;
+let scanData=[],scanning=false;
+let focusSeconds=25*60,focusInterval=null;
+let quiz=[],qi=0,score=0,answered=false;
 
-// Paste your Publishable key between these quotation marks.
-const SUPABASE_KEY = "sb_publishable_7xE2hpws2VSrGvFcs7F5uQ_XJTvFzGc";
+function enterApp(){
+let name=document.getElementById("username").value.trim();
+document.getElementById("profileName").textContent=name||"NOISEMAP User";
+if(name)localStorage.setItem("nm_name",name);
 
-let supabaseClient=null;
-if(window.supabase){
-supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let file=document.getElementById("avatar").files[0];
+if(file){
+let reader=new FileReader();
+reader.onload=()=>setPhoto(reader.result);
+reader.readAsDataURL(file);
+}
+else{
+let saved=localStorage.getItem("nm_photo");
+if(saved)setPhoto(saved);
+}
+document.getElementById("welcome").classList.add("hidden");
+document.getElementById("app").classList.remove("hidden");
+renderAllExtras();
+showTab("dashboard");
 }
 
-// APP VARIABLES
-let signupMode=false;
-let currentUser=null;
-let points=Number(localStorage.getItem("nm_points")||0);
-let rooms=JSON.parse(localStorage.getItem("nm_rooms")||"[]");
-let micStream=null;
-let audioContext=null;
-let scannerActive=false;
-
-// AUTH
-function toggleAuth(){
-signupMode=!signupMode;
-document.getElementById("authTitle").textContent=signupMode?"Create Account":"Welcome to NOISEMAP";
-document.getElementById("nameBox").classList.toggle("hidden",!signupMode);
-document.getElementById("authButton").textContent=signupMode?"Sign Up":"Login";
-document.getElementById("authMessage").textContent=signupMode?"Create your account.":"Login to continue.";
+function setPhoto(src){
+let img=document.getElementById("profilePhoto");
+img.src=src;
+img.classList.remove("hidden");
+document.getElementById("profileFallback").classList.add("hidden");
+localStorage.setItem("nm_photo",src);
 }
 
-async function authenticate(){
-const email=document.getElementById("email").value.trim();
-const password=document.getElementById("password").value;
-const fullName=document.getElementById("fullName").value.trim();
-const message=document.getElementById("authMessage");
+function showTab(id){
+document.querySelectorAll(".tab").forEach(x=>x.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+if(id==="dashboard")renderDashboard();
+if(id==="progress")renderProgress();
+if(id==="history")renderHistory();
+if(id==="timetable")renderTT();
+}
 
-if(!supabaseClient){message.textContent="Supabase client unavailable.";return;}
-if(!email||!password){message.textContent="Enter email and password.";return;}
-if(signupMode&&!fullName){message.textContent="Enter your full name.";return;}
+function renderDashboard(){
+let scansToday=scans.filter(x=>new Date(x.date).toDateString()===new Date().toDateString()).length;
+document.getElementById("dashSummary").innerHTML=`
+<div class="panel"><div class="muted">Total scans</div><div class="stat">${scans.length}</div></div>
+<div class="panel"><div class="muted">Today's scans</div><div class="stat">${scansToday}</div></div>
+<div class="panel"><div class="muted">Focus minutes</div><div class="stat">${focusTotal}</div></div>
+<div class="panel"><div class="muted">Timetable entries</div><div class="stat">${timetable.length}</div></div>
+<div class="panel"><div class="muted">Last noise level</div><div class="stat">${scans.length?scans[0].level+"%":"--"}</div></div>`;
+}
 
-message.textContent="Please wait...";
+function addTimetable(){
+let day=document.getElementById("ttDay").value;
+let time=document.getElementById("ttTime").value;
+let subject=document.getElementById("ttSubject").value.trim();
+if(!time||!subject)return alert("Enter a time and subject.");
+timetable.push({day,time,subject});
+localStorage.setItem("nm_tt",JSON.stringify(timetable));
+document.getElementById("ttSubject").value="";
+renderTT();
+renderDashboard();
+}
 
-try{
-if(signupMode){
-const {data,error}=await supabaseClient.auth.signUp({
-email,password,options:{data:{full_name:fullName}}
+function renderTT(){
+let box=document.getElementById("ttList");
+box.innerHTML="";
+let days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+days.forEach(day=>{
+let items=timetable.filter(x=>x.day===day).sort((a,b)=>a.time.localeCompare(b.time));
+if(items.length){
+let heading=document.createElement("h3");
+heading.textContent=day;
+box.appendChild(heading);
+items.forEach(item=>{
+let div=document.createElement("div");
+div.className="panel row";
+div.innerHTML=`<span>${item.time} — ${escapeHTML(item.subject)}</span>`;
+let btn=document.createElement("button");
+btn.textContent="Remove";
+btn.onclick=()=>{
+timetable=timetable.filter(x=>x!==item);
+localStorage.setItem("nm_tt",JSON.stringify(timetable));
+renderTT();
+renderDashboard();
+};
+div.appendChild(btn);
+box.appendChild(div);
 });
-if(error)throw error;
-message.textContent="Account created. Check your email if confirmation is required.";
-}else{
-const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
-if(error)throw error;
-currentUser=data.user;
-openApp();
 }
-}catch(error){message.textContent=error.message;}
+});
+if(!timetable.length)box.innerHTML="<p class='muted'>Your timetable is empty.</p>";
 }
 
-async function logout(){
-stopScanner();
-if(supabaseClient)await supabaseClient.auth.signOut();
-currentUser=null;
-document.getElementById("appScreen").style.display="none";
-document.getElementById("authScreen").style.display="block";
-document.getElementById("logoutBtn").classList.add("hidden");
+function escapeHTML(s){
+return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 }
 
-function openApp(){
-if(!currentUser)return;
-document.getElementById("authScreen").style.display="none";
-document.getElementById("appScreen").style.display="block";
-document.getElementById("logoutBtn").classList.remove("hidden");
-const name=currentUser.user_metadata?.full_name||"User";
-document.getElementById("welcomeText").textContent="Welcome, "+name;
-document.getElementById("profileName").textContent=name;
-document.getElementById("profileEmail").textContent=currentUser.email;
-document.getElementById("profilePoints").textContent=points;
-updateDashboard();
+/* FOCUS TIMER */
+function updateFocusDisplay(){
+let m=Math.floor(focusSeconds/60);
+let s=focusSeconds%60;
+document.getElementById("focusDisplay").textContent=
+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
 }
 
-async function restoreSession(){
-if(!supabaseClient)return;
+function startFocus(){
+if(focusInterval)return;
+if(focusSeconds<=0)resetFocus();
+focusInterval=setInterval(()=>{
+focusSeconds--;
+updateFocusDisplay();
+if(focusSeconds<=0){
+pauseFocus();
+focusTotal+=Number(document.getElementById("focusLength").value);
+localStorage.setItem("nm_focus",focusTotal);
+document.getElementById("focusMsg").textContent="Focus session complete!";
+renderDashboard();
+renderProgress();
+}
+},1000);
+document.getElementById("focusMsg").textContent="Focus session running.";
+}
+
+function pauseFocus(){
+clearInterval(focusInterval);
+focusInterval=null;
+document.getElementById("focusMsg").textContent="Timer paused.";
+}
+
+function resetFocus(){
+pauseFocus();
+focusSeconds=Number(document.getElementById("focusLength").value)*60;
+updateFocusDisplay();
+document.getElementById("focusMsg").textContent="Timer reset.";
+}
+
+document.getElementById("focusLength").onchange=resetFocus;
+updateFocusDisplay();
+
+/* NOISE SCAN */
+async function startScan(){
+if(scanning)return;
 try{
-const {data,error}=await supabaseClient.auth.getSession();
-if(error)throw error;
-if(data.session){currentUser=data.session.user;openApp();}
-}catch(error){console.log(error.message);}
-}
-
-// NAVIGATION
-function showPage(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-if(id==="reports")refreshReports();
-if(id==="classroom")renderRooms();
-}
-
-// SCANNER
-async function startScanner(){
-if(scannerActive)return;
-if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
-document.getElementById("scanMessage").textContent="Microphone unavailable. Open in a supported browser.";
-return;
-}
-try{
-micStream=await navigator.mediaDevices.getUserMedia({audio:true});
-audioContext=new(window.AudioContext||window.webkitAudioContext)();
-const source=audioContext.createMediaStreamSource(micStream);
-const analyser=audioContext.createAnalyser();
+stream=await navigator.mediaDevices.getUserMedia({audio:true});
+audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+mic=audioCtx.createMediaStreamSource(stream);
+analyser=audioCtx.createAnalyser();
 analyser.fftSize=256;
-source.connect(analyser);
-const buffer=new Uint8Array(analyser.frequencyBinCount);
-scannerActive=true;
-document.getElementById("scanMessage").textContent="Microphone active. Relative level only, not calibrated dB.";
+mic.connect(analyser);
+scanning=true;
+scanData=[];
+let duration=Number(document.getElementById("duration").value);
+let startTime=Date.now();
+document.getElementById("orb").classList.add("scanning");
+document.getElementById("result").classList.add("hidden");
+document.getElementById("start").disabled=true;
+document.getElementById("status").textContent="Listening...";
+let buffer=new Uint8Array(analyser.frequencyBinCount);
 
-function measure(){
-if(!scannerActive)return;
+scanTimer=setInterval(()=>{
 analyser.getByteTimeDomainData(buffer);
 let sum=0;
-for(let i=0;i<buffer.length;i++){const v=(buffer[i]-128)/128;sum+=v*v;}
-const rms=Math.sqrt(sum/buffer.length);
-const level=Math.min(100,Math.round(rms*300));
-document.getElementById("scanValue").textContent=level;
-document.getElementById("scanFill").style.width=level+"%";
-document.getElementById("scanLabel").textContent=level<20?"Low relative sound intensity":level<55?"Moderate relative sound intensity":"High relative sound intensity";
-requestAnimationFrame(measure);
+for(let v of buffer){
+let n=(v-128)/128;
+sum+=n*n;
 }
-measure();
-}catch(error){document.getElementById("scanMessage").textContent="Microphone access failed: "+error.message;}
+let rms=Math.sqrt(sum/buffer.length);
+let level=Math.min(100,Math.round(rms*400));
+scanData.push(level);
+document.getElementById("live").textContent=level;
+document.getElementById("count").textContent=Math.ceil((duration*1000-(Date.now()-startTime))/1000);
+document.getElementById("scanProgress").style.width=
+Math.min(100,((Date.now()-startTime)/(duration*1000))*100)+"%";
+drawGraph(scanData);
+if(Date.now()-startTime>=duration*1000)finishScan();
+},100);
+}catch(e){
+alert("Microphone permission is needed. Please allow microphone access and try again.");
 }
-
-function stopScanner(){
-scannerActive=false;
-if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;}
-if(audioContext){audioContext.close();audioContext=null;}
-document.getElementById("scanLabel").textContent="Scanner stopped";
-}
-
-// CLASSROOM
-function saveRoom(){
-const name=document.getElementById("roomName").value.trim();
-const location=document.getElementById("roomLocation").value.trim();
-const notes=document.getElementById("roomNotes").value.trim();
-const level=document.getElementById("roomLevel").value;
-if(!name){alert("Enter a classroom name.");return;}
-rooms.push({name,location,notes,level,date:new Date().toLocaleString()});
-localStorage.setItem("nm_rooms",JSON.stringify(rooms));
-document.getElementById("roomName").value="";
-document.getElementById("roomLocation").value="";
-document.getElementById("roomNotes").value="";
-document.getElementById("roomLevel").value="";
-renderRooms();updateDashboard();alert("Classroom saved.");
 }
 
-function renderRooms(){
-const container=document.getElementById("roomList");
-if(!rooms.length){container.innerHTML="<p class='muted'>No classrooms saved yet.</p>";return;}
-container.innerHTML=rooms.map((r,i)=>`
-<div class="notice">
-<b>${escapeHTML(r.name)}</b><br>
-Location: ${escapeHTML(r.location||"Not provided")}<br>
-Relative level: ${escapeHTML(String(r.level||"Not provided"))}<br>
-${escapeHTML(r.notes||"")}<br><small>${escapeHTML(r.date)}</small><br>
-<button class="danger" onclick="deleteRoom(${i})">Delete</button>
-</div>`).join("");
+function finishScan(){
+clearInterval(scanTimer);
+scanning=false;
+if(stream)stream.getTracks().forEach(t=>t.stop());
+if(audioCtx)audioCtx.close();
+document.getElementById("orb").classList.remove("scanning");
+document.getElementById("start").disabled=false;
+document.getElementById("status").textContent="Scan complete";
+document.getElementById("count").textContent="DONE";
+document.getElementById("scanProgress").style.width="100%";
+
+let avg=scanData.length?Math.round(scanData.reduce((a,b)=>a+b,0)/scanData.length):0;
+let label=avg<20?"Quiet":avg<45?"Moderate":avg<70?"Loud":"Very loud";
+let student=document.getElementById("students").value||"--";
+let result=document.getElementById("result");
+result.classList.remove("hidden");
+result.innerHTML=`
+<h3>Classroom Noise</h3>
+<div class="stat">${avg}% <span class="small">out of 100%</span></div>
+<div class="meter"><div style="width:${avg}%"></div></div>
+<p><span class="badge">${label}</span></p>
+<p class="muted">Relative noise intensity, not calibrated decibels.</p>
+<p>Students present: ${escapeHTML(student)}</p>`;
+let record={level:avg,label,date:new Date().toLocaleString(),students:student};
+scans.unshift(record);
+localStorage.setItem("nm_scans",JSON.stringify(scans));
+renderDashboard();
+renderHistory();
+renderProgress();
 }
 
-function deleteRoom(i){
-rooms.splice(i,1);
-localStorage.setItem("nm_rooms",JSON.stringify(rooms));
-renderRooms();updateDashboard();refreshReports();
+function drawGraph(data){
+let c=document.getElementById("graph");
+let ctx=c.getContext("2d");
+ctx.clearRect(0,0,c.width,c.height);
+ctx.strokeStyle="#a995ff";
+ctx.lineWidth=3;
+ctx.beginPath();
+data.forEach((v,i)=>{
+let x=i*(c.width/Math.max(data.length-1,1));
+let y=c.height-(v/100)*c.height;
+if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+});
+ctx.stroke();
 }
 
-function updateDashboard(){
-document.getElementById("roomCount").textContent=rooms.length;
-document.getElementById("challengeScore").textContent=points;
+/* HISTORY */
+function renderHistory(){
+let box=document.getElementById("historyList");
+box.innerHTML="";
+if(!scans.length){
+box.innerHTML="<p class='muted'>No scans recorded yet.</p>";
+return;
+}
+scans.forEach(x=>{
+let div=document.createElement("div");
+div.className="panel row";
+div.innerHTML=`<div><b>${x.level}%</b> — ${escapeHTML(x.label)}<div class="small muted">${escapeHTML(x.date)}</div></div>`;
+box.appendChild(div);
+});
 }
 
-// QUIZZES
+function clearHistory(){
+if(!confirm("Clear all scan history?"))return;
+scans=[];
+localStorage.removeItem("nm_scans");
+renderHistory();
+renderDashboard();
+renderProgress();
+}
+
+/* WEEKLY PROGRESS */
+function renderProgress(){
+let box=document.getElementById("progressView");
+if(!box)return;
+let days=[];
+for(let i=6;i>=0;i--){
+let d=new Date();
+d.setDate(d.getDate()-i);
+days.push(d);
+}
+let html="<div class='week'>";
+days.forEach(d=>{
+let count=scans.filter(x=>new Date(x.date).toDateString()===d.toDateString()).length;
+html+=`<div class="daycell"><span class="small muted">${d.toLocaleDateString("en",{weekday:"short"})}</span><b>${count}</b><span class="small">scans</span></div>`;
+});
+html+="</div>";
+html+=`<hr><p><b>Total scans:</b> ${scans.length}</p><p><b>Total focus minutes:</b> ${focusTotal}</p>`;
+box.innerHTML=html;
+}
+
+/* THEMES */
+function setTheme(t){
+if(t==="blue"){
+document.documentElement.style.setProperty("--purple","#80c7ff");
+document.documentElement.style.setProperty("--pink","#a8e4ff");
+}
+else if(t==="green"){
+document.documentElement.style.setProperty("--purple","#8fe0bb");
+document.documentElement.style.setProperty("--pink","#c5f0d8");
+}
+else{
+document.documentElement.style.setProperty("--purple","#a995ff");
+document.documentElement.style.setProperty("--pink","#f09bd7");
+}
+}
+
+/* BRAIN CHALLENGE */
 const questions=[
-{q:"What produces sound?",a:["Vibrations","Light","Heat alone"],c:0},
-{q:"Which unit is commonly used to measure sound level?",a:["Metres","Decibels","Litres"],c:1},
-{q:"What is noise pollution?",a:["Unwanted or disturbing sound","Silence","A type of light"],c:0},
-{q:"Which can help reduce unwanted sound?",a:["Sound absorbing materials","More speakers","Open loud windows"],c:0},
-{q:"Sound travels through:",a:["Only empty space","Materials such as air","Only light"],c:1}
+{c:"Science",q:"A star's spectrum is shifted toward longer wavelengths. What does this generally indicate?",a:["It is moving away relative to the observer","It is moving closer","Its mass is decreasing","Its temperature is necessarily rising"],k:0},
+{c:"Math",q:"If x²−5x+6=0, what is the product of its roots?",a:["6","5","−6","−5"],k:0},
+{c:"Logic",q:"All A are B. Some B are C. Which conclusion must be true?",a:["Some A are C","All C are A","All A are B","None"],k:2},
+{c:"Technology",q:"Which structure allows efficient lookup by key in many programming languages?",a:["Hash table","Stack","Queue","Linear list"],k:0},
+{c:"Environment",q:"Which atmospheric layer contains most of the ozone that absorbs UV radiation?",a:["Stratosphere","Troposphere","Mesosphere","Thermosphere"],k:0},
+{c:"Science",q:"What is the SI unit of electrical resistance?",a:["Ohm","Volt","Watt","Ampere"],k:0},
+{c:"Math",q:"What is the derivative of x³?",a:["3x²","x²","3x","x³"],k:0},
+{c:"Logic",q:"A statement and its converse are logically equivalent in every case. True or false?",a:["True","False","Only in geometry","Only for numbers"],k:1},
+{c:"Technology",q:"Which protocol is commonly used to securely transfer web pages?",a:["HTTPS","HTTP","FTP","SMTP"],k:0},
+{c:"Environment",q:"What process converts atmospheric nitrogen into forms plants can use?",a:["Nitrogen fixation","Evaporation","Photosynthesis","Condensation"],k:0},
+{c:"Science",q:"Which particle has a negative electric charge?",a:["Electron","Proton","Neutron","Photon"],k:0},
+{c:"Math",q:"What is the sum of the interior angles of a hexagon?",a:["720°","360°","540°","900°"],k:0},
+{c:"Logic",q:"If the premise is false, does a conditional statement automatically become false?",a:["Yes","No","Only sometimes","Always"],k:1},
+{c:"Technology",q:"What does CPU stand for?",a:["Central Processing Unit","Computer Power Utility","Central Program User","Core Processing Upload"],k:0},
+{c:"Environment",q:"Which gas is most associated with human-caused global warming?",a:["Carbon dioxide","Oxygen","Helium","Hydrogen"],k:0},
+{c:"Science",q:"Which principle states that energy cannot be created or destroyed in an isolated system?",a:["Conservation of energy","Newton's third law","Ohm's law","Boyle's law"],k:0},
+{c:"Math",q:"What is 15% of 240?",a:["36","24","40","30"],k:0},
+{c:"Logic",q:"If today is Tuesday, what day is 100 days later?",a:["Thursday","Friday","Saturday","Sunday"],k:0},
+{c:"Technology",q:"What does RAM primarily provide to a computer?",a:["Temporary working memory","Permanent storage","Internet connection","Power supply"],k:0},
+{c:"Environment",q:"Which renewable source uses moving air to generate electricity?",a:["Wind energy","Coal","Natural gas","Oil"],k:0},
+{c:"Science",q:"What is the chemical symbol for sodium?",a:["Na","So","S","N"],k:0},
+{c:"Math",q:"What is the square root of 169?",a:["13","12","14","15"],k:0},
+{c:"Logic",q:"If five machines make five objects in five minutes, how long do 100 machines take to make 100 objects?",a:["5 minutes","100 minutes","20 minutes","1 minute"],k:0},
+{c:"Technology",q:"Which is an example of a relational database?",a:["SQL-based database","A plain text file","A bitmap image","A video file"],k:0},
+{c:"Environment",q:"Which is a major cause of biodiversity loss?",a:["Habitat destruction","Cloud formation","Ocean tides","Moonlight"],k:0}
 ];
 
-function buildQuiz(containerId,prefix){
-const container=document.getElementById(containerId);
-container.innerHTML="";
-questions.forEach((q,i)=>{
-const div=document.createElement("div");
-div.className="notice";
-div.innerHTML=`<b>${i+1}. ${escapeHTML(q.q)}</b>
-${q.a.map((a,j)=>`<label style="display:block;padding:8px"><input style="width:auto" type="radio" name="${prefix}${i}" value="${j}">${escapeHTML(a)}</label>`).join("")}`;
-container.appendChild(div);
+function startQuiz(){
+let cat=document.getElementById("category").value;
+let n=Number(document.getElementById("roundSize").value);
+quiz=questions.filter(x=>cat==="Mixed"||x.c===cat);
+quiz=quiz.slice().sort(()=>Math.random()-.5).slice(0,n);
+qi=0;score=0;answered=false;
+renderQuestion();
+}
+
+function renderQuestion(){
+let box=document.getElementById("quizbox");
+if(qi>=quiz.length){
+box.innerHTML=`<div class="panel"><h3>Round complete!</h3><div class="stat">${score}/${quiz.length}</div><p>You answered ${score} correctly out of ${quiz.length} questions.</p><button class="primary" onclick="startQuiz()">Play again</button></div>`;
+return;
+}
+let q=quiz[qi];
+let options=q.a.map((x,i)=>({text:x,correct:i===q.k}));
+options.sort(()=>Math.random()-.5);
+box.innerHTML=`<div class="panel"><div class="muted">Question ${qi+1} of ${quiz.length} · ${q.c}</div><h3>${escapeHTML(q.q)}</h3><div id="answers"></div><p id="feedback" class="toast"></p><button id="next" class="primary hidden" onclick="nextQuestion()">Next question</button></div>`;
+let answers=document.getElementById("answers");
+options.forEach(o=>{
+let b=document.createElement("button");
+b.className="answer";
+b.textContent=o.text;
+b.onclick=()=>answerQuiz(o.correct,b);
+answers.appendChild(b);
 });
-const btn=document.createElement("button");
-btn.textContent="Submit Quiz";
-btn.onclick=()=>scoreQuiz(prefix,containerId);
-container.appendChild(btn);
 }
 
-function startAcademy(){buildQuiz("academyQuiz","a");}
-function startChallenge(){buildQuiz("challengeQuiz","c");}
-
-function scoreQuiz(prefix,containerId){
-let score=0;
-questions.forEach((q,i)=>{
-const selected=document.querySelector(`input[name="${prefix}${i}"]:checked`);
-if(selected&&Number(selected.value)===q.c)score++;
-});
-if(prefix==="c"){
-points+=score;
-localStorage.setItem("nm_points",points);
-document.getElementById("profilePoints").textContent=points;
-updateDashboard();
-}
-document.getElementById(containerId).insertAdjacentHTML("beforeend",`<div class="notice">Score: ${score}/${questions.length}${prefix==="c"?" — "+score+" points earned":""}</div>`);
+function answerQuiz(correct,btn){
+if(answered)return;
+answered=true;
+if(correct)score++;
+document.querySelectorAll("#answers button").forEach(b=>b.disabled=true);
+btn.classList.add(correct?"good":"bad");
+document.getElementById("feedback").textContent=correct?"Correct!":"Incorrect.";
+document.getElementById("next").classList.remove("hidden");
 }
 
-// ASSISTANT
-function askAssistant(){
-const q=document.getElementById("question").value.toLowerCase();
-let answer="I can help you learn about sound, noise pollution, classroom mapping and noise scanning.";
-if(q.includes("noise pollution"))answer="Noise pollution is unwanted or excessive sound that may affect comfort, concentration and wellbeing.";
-else if(q.includes("decibel")||q.includes("db"))answer="Decibels (dB) describe sound levels. This scanner is not a calibrated decibel meter.";
-else if(q.includes("classroom"))answer="Use Classroom Mapper to record classroom names, locations, observations and relative levels.";
-else if(q.includes("scanner")||q.includes("microphone"))answer="The scanner estimates relative sound intensity using microphone input.";
-else if(q.includes("reduce"))answer="Close doors, use sound absorbing materials, maintain equipment and create quieter spaces.";
-else if(q.includes("sound"))answer="Sound is a vibration that travels through a medium such as air, water or solid materials.";
-document.getElementById("answer").textContent=answer;
+function nextQuestion(){
+qi++;answered=false;
+renderQuestion();
 }
 
-// REPORTS
-function refreshReports(){
-const container=document.getElementById("reportList");
-if(!rooms.length){container.innerHTML="<p class='muted'>No records yet.</p>";}
-else{
-container.innerHTML=rooms.map(r=>`<div class="notice"><b>${escapeHTML(r.name)}</b><br>${escapeHTML(r.location||"")}<br>Relative level: ${escapeHTML(String(r.level||"Not provided"))}<br>${escapeHTML(r.notes||"")}</div>`).join("");
+/* STARTUP */
+function renderAllExtras(){
+let savedName=localStorage.getItem("nm_name");
+if(savedName)document.getElementById("profileName").textContent=savedName;
+let savedPhoto=localStorage.getItem("nm_photo");
+if(savedPhoto){
+document.getElementById("profilePhoto").src=savedPhoto;
+document.getElementById("profilePhoto").classList.remove("hidden");
+document.getElementById("profileFallback").classList.add("hidden");
 }
-document.getElementById("progressText").textContent=points+" challenge points";
+renderDashboard();
+renderTT();
+renderHistory();
+renderProgress();
 }
-
-// HTML SAFETY
-function escapeHTML(value){
-return String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
-}
-
-// START
-restoreSession();
-renderRooms();
-updateDashboard();
+renderAllExtras();
 </script>
 </body>
-                           </html>
+</html>
